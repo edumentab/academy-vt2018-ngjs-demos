@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo</title>
+  <link rel="stylesheet" href="../../lib/style.css">
+  <link rel="stylesheet" href="../../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="timeout">
+  <div class="wrapper">
+    <div>
+      <a href="../../index.html">&larr; back to demo index</a>
+      <div><p>Showing the $timeout service, as well as how we must call <code>$scope.apply</code> if we cause changes by things outside of AngularJS.</p></div>
+      <app><div ng-app="timeout-demo">
+  <div ng-controller="ngtimeoutcontroller">
+    {{message}}
+  </div>
+  <hr/>
+  <div ng-controller="vanillaworkingtimeoutcontroller">
+    {{message}}
+  </div>
+  <hr/>
+  <div ng-controller="vanillafailedtimeoutcontroller">
+    {{message}}
+  </div>
+</div></app>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='index_html'>index.html</div><div data-file='main_ts'>main.ts</div></div>
+      <div class="sourcefiles"><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-app</span>=<span class="hljs-string">"timeout-demo"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"ngtimeoutcontroller"</span>&gt;</span>
+    {{message}}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"vanillaworkingtimeoutcontroller"</span>&gt;</span>
+    {{message}}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"vanillafailedtimeoutcontroller"</span>&gt;</span>
+    {{message}}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre><pre id='main_ts-source'><code><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> angular <span class="hljs-keyword">from</span> <span class="hljs-string">'angular'</span>;
+
+<span class="hljs-keyword">let</span> app = angular.module(<span class="hljs-string">'timeout-demo'</span>, []);
+
+app.controller(<span class="hljs-string">'ngtimeoutcontroller'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope, $timeout</span>)</span>{
+  $timeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    $scope.message = <span class="hljs-string">"Boom!"</span>
+  },<span class="hljs-number">3000</span>);
+  $scope.message = <span class="hljs-string">'I will self-destruct in 3 seconds!'</span>;
+});
+
+app.controller(<span class="hljs-string">'vanillaworkingtimeoutcontroller'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope</span>)</span>{
+  setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    $scope.message = <span class="hljs-string">"BOOOOM!"</span>;
+    $scope.$apply(); <span class="hljs-comment">// tell AngularJS to update the HTML</span>
+  }, <span class="hljs-number">5000</span>);
+  $scope.message = <span class="hljs-string">'I will self-destruct in 5 seconds!'</span>;
+});
+
+app.controller(<span class="hljs-string">'vanillafailedtimeoutcontroller'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope</span>)</span>{
+  setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    $scope.message = <span class="hljs-string">"BOOOOM!"</span>;
+    <span class="hljs-comment">// forgot to call $scope.$apply, so the above won't be redrawn</span>
+  }, <span class="hljs-number">7000</span>);
+  $scope.message = <span class="hljs-string">'I will self-destruct in 7 seconds, but you will never see that :('</span>;
+});
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+function select(id){
+  let button = document.querySelector(`[data-file=${id}]`);
+  if (button){
+    document.querySelectorAll('.sources .active').forEach(function(elem){
+      elem.classList.remove('active')
+    });
+    button.classList.add('active');
+    document.getElementById(id + '-source').classList.add('active');
+  } else {
+    console.log("Warning, couldn't find source file", id);
+  }
+}
+
+document.querySelectorAll('.sourcenav > *').forEach(
+  elem => elem.addEventListener('click', function(e){
+    location.hash = '#' + this.getAttribute("data-file");
+    e.preventDefault();
+  })
+);
+
+window.addEventListener("hashchange", function(){
+  select(location.hash.replace('#',''));
+});
+
+select( (location.hash || '').replace('#','') || 'main_ts' );
+
+  </script>
+  <script charset="utf-8" src="../../lib/demos.js"></script>
+</body>
+
+</html>

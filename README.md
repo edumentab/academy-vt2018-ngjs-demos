@@ -1,0 +1,1 @@
+These are live AngularJS demos used in the Academy Java vt2018 course.

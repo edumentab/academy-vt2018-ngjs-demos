@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo</title>
+  <link rel="stylesheet" href="../../lib/style.css">
+  <link rel="stylesheet" href="../../lib/codestyle.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body data-demoid="homemadenav">
+  <div class="wrapper">
+    <div>
+      <a href="../../index.html">&larr; back to demo index</a>
+      <div><p>Showing how we can make home-made &quot;navigation&quot; using <code>ng-if</code>.</p>
+
+<p>Normally you would use a Router, but we save that for the future.</p></div>
+      <app><div ng-app="navDemo" ng-cloak>
+  <appcomponent></appcomponent>
+</div></app>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='index_html'>index.html</div><div data-file='main_ts'>main.ts</div><div data-file='aboutcomponent_ts'>aboutcomponent.ts</div><div data-file='appcomponent_ts'>appcomponent.ts</div><div data-file='homecomponent_ts'>homecomponent.ts</div><div data-file='styles_css'>styles.css</div></div>
+      <div class="sourcefiles"><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-app</span>=<span class="hljs-string">"navDemo"</span> <span class="hljs-attr">ng-cloak</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">appcomponent</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">appcomponent</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre><pre id='main_ts-source'><code><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> angular <span class="hljs-keyword">from</span> <span class="hljs-string">'angular'</span>;
+
+<span class="hljs-keyword">let</span> app = angular.module(<span class="hljs-string">'navDemo'</span>, []);
+
+<span class="hljs-keyword">import</span> addAppComponent <span class="hljs-keyword">from</span> <span class="hljs-string">'./appcomponent'</span>;
+addAppComponent(app);
+
+<span class="hljs-keyword">import</span> addHomeComponent <span class="hljs-keyword">from</span> <span class="hljs-string">'./homecomponent'</span>;
+addHomeComponent(app);
+
+<span class="hljs-keyword">import</span> addAboutComponent <span class="hljs-keyword">from</span> <span class="hljs-string">'./aboutcomponent'</span>;
+addAboutComponent(app);
+</code></pre><pre id='aboutcomponent_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addAboutComponent</span>(<span class="hljs-params">app</span>)</span>{
+  app.component(<span class="hljs-string">'aboutcomponent'</span>, {
+    template: <span class="hljs-string">`
+      &lt;h4&gt;About us&lt;/h4&gt;
+      We are an absolutely AMAZING company OMG OMG.
+    `</span>
+  });
+}</code></pre><pre id='appcomponent_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addAppComponent</span>(<span class="hljs-params">app</span>)</span>{
+  app.component(<span class="hljs-string">'appcomponent'</span>, {
+    controller: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope</span>)</span>{
+      $scope.position = <span class="hljs-string">'home'</span>;
+      $scope.goto = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">where</span>)</span>{
+        $scope.position = where;
+      }
+    },
+    template: <span class="hljs-string">`
+      &lt;h1&gt;Super app!&lt;/h1&gt;
+      &lt;nav&gt;
+        &lt;ul&gt;
+          &lt;li ng-class="{active: position === 'home'}"
+              ng-click="goto('home')"&gt;Home&lt;/li&gt;
+          &lt;li ng-class="{active: position === 'about'}"
+              ng-click="goto('about')"&gt;About&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/nav&gt;
+      &lt;homecomponent ng-if="position === 'home'"&gt;&lt;/homecomponent&gt;
+      &lt;aboutcomponent ng-if="position === 'about'"&gt;&lt;/aboutcomponent&gt;
+      &lt;footer&gt;
+        &amp;copy; me until forever
+      &lt;/footer&gt;
+    `</span>
+  });
+}</code></pre><pre id='homecomponent_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addHomeComponent</span>(<span class="hljs-params">app</span>)</span>{
+  app.component(<span class="hljs-string">'homecomponent'</span>, {
+    template: <span class="hljs-string">`
+      &lt;h4&gt;Home&lt;/h4&gt;
+      What an awesome site, AMIRITE?! :D
+    `</span>
+  });
+}</code></pre><pre id='styles_css-source'><code><span class="hljs-selector-tag">ul</span> {
+  <span class="hljs-attribute">list-style-type</span>: none;
+  <span class="hljs-attribute">padding-left</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">display</span>: flex;
+}
+
+<span class="hljs-selector-tag">li</span><span class="hljs-selector-pseudo">:not(</span><span class="hljs-selector-pseudo">:last-child)</span> {
+  <span class="hljs-attribute">margin-right</span>: <span class="hljs-number">1em</span>;
+}
+
+<span class="hljs-selector-tag">li</span> {
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">3px</span>;
+  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid salmon;
+  <span class="hljs-attribute">cursor</span>: pointer;
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">3px</span>;
+}
+
+<span class="hljs-selector-tag">li</span><span class="hljs-selector-pseudo">:hover</span> {
+  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#DCDCDC</span>;
+}
+
+<span class="hljs-selector-tag">li</span><span class="hljs-selector-class">.active</span> {
+  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#BBB</span>;
+  <span class="hljs-attribute">color</span>: white;
+}
+
+<span class="hljs-selector-tag">footer</span> {
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">2em</span>;
+  <span class="hljs-attribute">border-top</span>: <span class="hljs-number">1px</span> solid salmon;
+}
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+function select(id){
+  let button = document.querySelector(`[data-file=${id}]`);
+  if (button){
+    document.querySelectorAll('.sources .active').forEach(function(elem){
+      elem.classList.remove('active')
+    });
+    button.classList.add('active');
+    document.getElementById(id + '-source').classList.add('active');
+  } else {
+    console.log("Warning, couldn't find source file", id);
+  }
+}
+
+document.querySelectorAll('.sourcenav > *').forEach(
+  elem => elem.addEventListener('click', function(e){
+    location.hash = '#' + this.getAttribute("data-file");
+    e.preventDefault();
+  })
+);
+
+window.addEventListener("hashchange", function(){
+  select(location.hash.replace('#',''));
+});
+
+select( (location.hash || '').replace('#','') || 'main_ts' );
+
+  </script>
+  <script charset="utf-8" src="../../lib/demos.js"></script>
+</body>
+
+</html>

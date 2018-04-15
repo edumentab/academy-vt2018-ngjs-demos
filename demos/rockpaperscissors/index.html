@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo</title>
+  <link rel="stylesheet" href="../../lib/style.css">
+  <link rel="stylesheet" href="../../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="rockpaperscissors">
+  <div class="wrapper">
+    <div>
+      <a href="../../index.html">&larr; back to demo index</a>
+      <div><p>A component composition demonstration!</p>
+
+<p>The <code>gamecomponent</code> are rendering two <code>handcomponents</code>, and sending and receiving values to them.</p></div>
+      <app><div ng-app="rockpaperscissors">
+  <gamecomponent></gamecomponent>
+</div></app>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='index_html'>index.html</div><div data-file='main_ts'>main.ts</div><div data-file='gamecomponent_ts'>gamecomponent.ts</div><div data-file='gamelogic_ts'>gamelogic.ts</div><div data-file='handcomponent_ts'>handcomponent.ts</div></div>
+      <div class="sourcefiles"><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-app</span>=<span class="hljs-string">"rockpaperscissors"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">gamecomponent</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">gamecomponent</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre><pre id='main_ts-source'><code><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> angular <span class="hljs-keyword">from</span> <span class="hljs-string">'angular'</span>;
+
+<span class="hljs-keyword">let</span> app = angular.module(<span class="hljs-string">'rockpaperscissors'</span>, []);
+
+<span class="hljs-keyword">import</span> addGameComponent <span class="hljs-keyword">from</span> <span class="hljs-string">'./gamecomponent'</span>;
+addGameComponent(app);
+
+<span class="hljs-keyword">import</span> addHandComponent <span class="hljs-keyword">from</span> <span class="hljs-string">'./handcomponent'</span>;
+addHandComponent(app);
+</code></pre><pre id='gamecomponent_ts-source'><code><span class="hljs-keyword">import</span> calculateResult <span class="hljs-keyword">from</span> <span class="hljs-string">'./gamelogic'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addGameComponent</span>(<span class="hljs-params">app</span>)</span>{
+  app.component(<span class="hljs-string">'gamecomponent'</span>, {
+    controller: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-comment">// the hand variables must be objects, otherwise</span>
+      <span class="hljs-comment">// we cannot do two-way data binding when we</span>
+      <span class="hljs-comment">// pass them to the hand component</span>
+      <span class="hljs-keyword">this</span>.hand1 = {current: <span class="hljs-string">'rock'</span>};
+      <span class="hljs-keyword">this</span>.hand2 = {current: <span class="hljs-string">'rock'</span>};
+      <span class="hljs-keyword">this</span>.result = <span class="hljs-string">"Welcome to this AWESOME GAME!"</span>;
+      <span class="hljs-keyword">this</span>.compare = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">this</span>.result = calculateResult(
+          <span class="hljs-keyword">this</span>.hand1.current,
+          <span class="hljs-keyword">this</span>.hand2.current
+        );
+      };
+    },
+    template: <span class="hljs-string">`
+      &lt;h3&gt;Rock paper scissors&lt;/h3&gt;
+      &lt;div class="hands"&gt;
+        &lt;handcomponent name="Plr1" selected="$ctrl.hand1"&gt;&lt;/handcomponent&gt;
+        &lt;handcomponent name="Plr2" selected="$ctrl.hand2"&gt;&lt;/handcomponent&gt;
+      &lt;/div&gt;
+      &lt;button ng-click="$ctrl.compare()"&gt;Battle&lt;/button&gt;
+      &lt;p&gt;{{$ctrl.result}}&lt;/p&gt;
+    `</span>
+  });
+}
+</code></pre><pre id='gamelogic_ts-source'><code><span class="hljs-comment">/*
+
+Rock Paper Scissors game logic! We'll be called with two strings,
+and both have three possible values: 'rock', 'paper', 'scissors'
+
+We are supposed to return a message like this:
+
+"rock beats scissor, plr1 won"
+"both chose paper, it is a draw"
+"paper beats rock, plr2 won"
+
+*/</span>
+
+<span class="hljs-keyword">const</span> beats = { rock: <span class="hljs-string">"scissors"</span>, scissors: <span class="hljs-string">"paper"</span>, paper: <span class="hljs-string">"rock"</span> };
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">calculateResult</span>(<span class="hljs-params">choice1, choice2</span>) </span>{
+
+  <span class="hljs-keyword">if</span> (choice1 === choice2) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"Both chose "</span> + choice1 + <span class="hljs-string">", it is a draw"</span>;
+  }
+
+  <span class="hljs-keyword">if</span> (beats[choice1] === choice2) {
+    <span class="hljs-keyword">return</span> choice1 + <span class="hljs-string">" beats "</span> + choice2 + <span class="hljs-string">", plr1 wins!"</span>;
+  }
+
+  <span class="hljs-keyword">return</span> choice2 + <span class="hljs-string">" beats "</span> + choice1 + <span class="hljs-string">", plr2 wins!"</span>;
+}</code></pre><pre id='handcomponent_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addHandComponent</span>(<span class="hljs-params">app</span>)</span>{
+  app.component(<span class="hljs-string">'handcomponent'</span>, {
+    <span class="hljs-comment">/*
+    The `bindings` definition lets us read values from attributes
+    that the parent put on us, and use those values to
+    populate inner scope variables. We can read values in
+    different ways:
+      @ means as text
+      &gt; means to evaulate it as an expression
+      = means set up a two-way data binding
+      &amp; means something else, but we'll ignore that for now :)
+    */</span>
+    bindings: {
+       <span class="hljs-comment">// read the passed-in `name` attribute as text (`@`)</span>
+       <span class="hljs-comment">// and put it in a scope variable called "title"</span>
+      <span class="hljs-string">'title'</span>: <span class="hljs-string">'@name'</span>,
+
+      <span class="hljs-comment">// set up a two-way binding (`=`) between the attribute</span>
+      <span class="hljs-comment">// `selected` and the inner scope variable `choice`</span>
+      <span class="hljs-string">'choice'</span>: <span class="hljs-string">'=selected'</span>,
+    },
+    controller: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-comment">/*
+      Don't actually need any code in here! The scope definition
+      above will result in creating two scope variables for us:
+      -  `title` which we will render as the fieldset legend
+      -  `choice` which we will connect to the radio buttons
+      */</span>
+    },
+    template: <span class="hljs-string">`
+      &lt;fieldset&gt;
+        &lt;legend&gt;{{$ctrl.title}}&lt;/legend&gt;
+        &lt;label&gt;
+          &lt;input type="radio"
+                 ng-model="$ctrl.choice.current"
+                 value="rock"/&gt;
+          Rock
+        &lt;/label&gt;
+        &lt;label&gt;
+          &lt;input type="radio"
+                 ng-model="$ctrl.choice.current"
+                 value="paper"/&gt;
+          Paper
+        &lt;/label&gt;
+        &lt;label&gt;
+          &lt;input type="radio"
+                 ng-model="$ctrl.choice.current"
+                value="scissors"/&gt;
+          Scissors
+        &lt;/label&gt;
+      &lt;/fieldset&gt;
+    `</span>
+  });
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+function select(id){
+  let button = document.querySelector(`[data-file=${id}]`);
+  if (button){
+    document.querySelectorAll('.sources .active').forEach(function(elem){
+      elem.classList.remove('active')
+    });
+    button.classList.add('active');
+    document.getElementById(id + '-source').classList.add('active');
+  } else {
+    console.log("Warning, couldn't find source file", id);
+  }
+}
+
+document.querySelectorAll('.sourcenav > *').forEach(
+  elem => elem.addEventListener('click', function(e){
+    location.hash = '#' + this.getAttribute("data-file");
+    e.preventDefault();
+  })
+);
+
+window.addEventListener("hashchange", function(){
+  select(location.hash.replace('#',''));
+});
+
+select( (location.hash || '').replace('#','') || 'main_ts' );
+
+  </script>
+  <script charset="utf-8" src="../../lib/demos.js"></script>
+</body>
+
+</html>

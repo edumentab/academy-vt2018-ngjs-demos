@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo</title>
+  <link rel="stylesheet" href="../../lib/style.css">
+  <link rel="stylesheet" href="../../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="service">
+  <div class="wrapper">
+    <div>
+      <a href="../../index.html">&larr; back to demo index</a>
+      <div><p>Showing off how a service can function as a house for &quot;global&quot; data, and be injected where it is needed.</p></div>
+      <app><div ng-app="serviceDemo">
+  <div ng-controller="titleController">
+    <h2>Read our {{numberOfQuotes}} quotes!</h2>
+  </div>
+  <hr/>
+  <div ng-controller="listController">
+    <ul>
+      <li ng-repeat="q in quotes track by $index">{{q}}</li>
+    </ul>
+  </div>
+  <hr/>
+  <div ng-controller="formController">
+    <input ng-model="newQuote">
+    <button ng-click="addQuote(newQuote)">Add</button>
+  </div>
+</div></app>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='index_html'>index.html</div><div data-file='main_ts'>main.ts</div><div data-file='formcontroller_ts'>formcontroller.ts</div><div data-file='listcontroller_ts'>listcontroller.ts</div><div data-file='quoteservice_ts'>quoteservice.ts</div><div data-file='titlecontroller_ts'>titlecontroller.ts</div></div>
+      <div class="sourcefiles"><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-app</span>=<span class="hljs-string">"serviceDemo"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"titleController"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Read our {{numberOfQuotes}} quotes!<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"listController"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">ng-repeat</span>=<span class="hljs-string">"q in quotes track by $index"</span>&gt;</span>{{q}}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>/&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"formController"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ng-model</span>=<span class="hljs-string">"newQuote"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">ng-click</span>=<span class="hljs-string">"addQuote(newQuote)"</span>&gt;</span>Add<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre><pre id='main_ts-source'><code><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> angular <span class="hljs-keyword">from</span> <span class="hljs-string">'angular'</span>;
+
+<span class="hljs-keyword">let</span> app = angular.module(<span class="hljs-string">'serviceDemo'</span>, []);
+
+<span class="hljs-keyword">import</span> addQuoteService <span class="hljs-keyword">from</span> <span class="hljs-string">'./quoteservice'</span>;
+addQuoteService(app);
+
+<span class="hljs-keyword">import</span> addListController <span class="hljs-keyword">from</span> <span class="hljs-string">'./listcontroller'</span>;
+addListController(app);
+
+<span class="hljs-keyword">import</span> addTitleController <span class="hljs-keyword">from</span> <span class="hljs-string">'./titlecontroller'</span>;
+addTitleController(app);
+
+<span class="hljs-keyword">import</span> addFormController <span class="hljs-keyword">from</span> <span class="hljs-string">'./formcontroller'</span>;
+addFormController(app);
+</code></pre><pre id='formcontroller_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addFormController</span>(<span class="hljs-params">app</span>)</span>{
+  app.controller(<span class="hljs-string">'formController'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope, quoteService</span>)</span>{
+    $scope.addQuote = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">quote</span>)</span>{
+      quoteService.addQuote(quote);
+    }
+  });
+}</code></pre><pre id='listcontroller_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addListController</span>(<span class="hljs-params">app</span>)</span>{
+  <span class="hljs-comment">// we add controllers by calling the "controller" method</span>
+  app.controller(<span class="hljs-string">'listController'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope, quoteService</span>)</span>{
+    quoteService.subscribe(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">quotes</span>)</span>{
+      $scope.quotes = quotes;
+    });
+  });
+}</code></pre><pre id='quoteservice_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addQuoteService</span>(<span class="hljs-params">app</span>)</span>{
+  <span class="hljs-comment">// we add services by calling the "factory" method on the angular module</span>
+  app.factory(<span class="hljs-string">'quoteService'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    
+    <span class="hljs-comment">// these variables will be "private",</span>
+    <span class="hljs-comment">// not directly accessible from the outside</span>
+    <span class="hljs-keyword">let</span> quotes = [<span class="hljs-string">'Carpe Noctem'</span>];
+    <span class="hljs-keyword">let</span> subscribers = []; <span class="hljs-comment">// the callbacks of all subscribers</span>
+
+    <span class="hljs-comment">// the thing we return from here will be what others get</span>
+    <span class="hljs-comment">// when they ask for the service</span>
+    <span class="hljs-keyword">return</span> {
+      subscribe: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">callback</span>)</span>{
+        subscribers.push(callback); <span class="hljs-comment">// store the callback</span>
+        callback(quotes); <span class="hljs-comment">// also immediately call with current data</span>
+      },
+      addQuote: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">quote</span>)</span>{
+        quotes.push(quote); <span class="hljs-comment">// add the new quote to the list</span>
+        <span class="hljs-comment">// since the data has changed we need to call all subscribers</span>
+        <span class="hljs-comment">// with the new data</span>
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> callback of subscribers){
+          callback(quotes);
+        }
+      }
+    }
+  });
+}</code></pre><pre id='titlecontroller_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addTitleController</span>(<span class="hljs-params">app</span>)</span>{
+  <span class="hljs-comment">// we add controllers by calling the "controller" method</span>
+  app.controller(<span class="hljs-string">'titleController'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope, quoteService</span>)</span>{
+    quoteService.subscribe(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">quotes</span>)</span>{
+      $scope.numberOfQuotes = quotes.length;
+    });
+  });
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+function select(id){
+  let button = document.querySelector(`[data-file=${id}]`);
+  if (button){
+    document.querySelectorAll('.sources .active').forEach(function(elem){
+      elem.classList.remove('active')
+    });
+    button.classList.add('active');
+    document.getElementById(id + '-source').classList.add('active');
+  } else {
+    console.log("Warning, couldn't find source file", id);
+  }
+}
+
+document.querySelectorAll('.sourcenav > *').forEach(
+  elem => elem.addEventListener('click', function(e){
+    location.hash = '#' + this.getAttribute("data-file");
+    e.preventDefault();
+  })
+);
+
+window.addEventListener("hashchange", function(){
+  select(location.hash.replace('#',''));
+});
+
+select( (location.hash || '').replace('#','') || 'main_ts' );
+
+  </script>
+  <script charset="utf-8" src="../../lib/demos.js"></script>
+</body>
+
+</html>

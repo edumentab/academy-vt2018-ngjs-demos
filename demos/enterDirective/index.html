@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo</title>
+  <link rel="stylesheet" href="../../lib/style.css">
+  <link rel="stylesheet" href="../../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="enterDirective">
+  <div class="wrapper">
+    <div>
+      <a href="../../index.html">&larr; back to demo index</a>
+      <div><p>Creating your own directive is a rather advanced concept. </p>
+
+<p>Here we&#39;re demonstrating how to make an &quot;enter key catch&quot; directive for putting on inputs.</p></div>
+      <app><div ng-app="directiveDemo" ng-cloak>
+  <div ng-controller="formController">
+    <input
+      ng-model="fieldVal"
+      on-enter="submitValue(fieldVal)"
+      on-enter-disabled="!fieldVal.length">
+    <button
+      ng-disabled="!fieldVal.length"
+      ng-click="submitValue(fieldVal)">Submit</button>
+    <p>Current submission: {{currentVal}}</p>
+  </div>
+</div></app>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='index_html'>index.html</div><div data-file='main_ts'>main.ts</div><div data-file='formController_ts'>formController.ts</div><div data-file='onEnterDirective_ts'>onEnterDirective.ts</div></div>
+      <div class="sourcefiles"><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-app</span>=<span class="hljs-string">"directiveDemo"</span> <span class="hljs-attr">ng-cloak</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"formController"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+      <span class="hljs-attr">ng-model</span>=<span class="hljs-string">"fieldVal"</span>
+      <span class="hljs-attr">on-enter</span>=<span class="hljs-string">"submitValue(fieldVal)"</span>
+      <span class="hljs-attr">on-enter-disabled</span>=<span class="hljs-string">"!fieldVal.length"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span>
+      <span class="hljs-attr">ng-disabled</span>=<span class="hljs-string">"!fieldVal.length"</span>
+      <span class="hljs-attr">ng-click</span>=<span class="hljs-string">"submitValue(fieldVal)"</span>&gt;</span>Submit<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Current submission: {{currentVal}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre><pre id='main_ts-source'><code><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> angular <span class="hljs-keyword">from</span> <span class="hljs-string">'angular'</span>;
+
+<span class="hljs-keyword">let</span> app = angular.module(<span class="hljs-string">'directiveDemo'</span>, []);
+
+<span class="hljs-keyword">import</span> addOnEnterDirective <span class="hljs-keyword">from</span> <span class="hljs-string">'./onEnterDirective'</span>;
+addOnEnterDirective(app);
+
+<span class="hljs-keyword">import</span> addFormController <span class="hljs-keyword">from</span> <span class="hljs-string">'./formController'</span>;
+addFormController(app);
+</code></pre><pre id='formController_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addFormController</span>(<span class="hljs-params">app</span>)</span>{
+  app.controller(<span class="hljs-string">'formController'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope</span>)</span>{
+    $scope.submitValue = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newVal</span>)</span>{
+      $scope.currentVal = newVal;
+      $scope.fieldVal = <span class="hljs-string">""</span>;
+    };
+  });
+}</code></pre><pre id='onEnterDirective_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addOnEnterDirective</span>(<span class="hljs-params">app</span>)</span>{
+  app.directive(<span class="hljs-string">'onEnter'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-comment">// when creating a directive we must return a </span>
+    <span class="hljs-comment">// settings object</span>
+    <span class="hljs-keyword">return</span> {
+       <span class="hljs-comment">// this directive can only be used as an Attribute</span>
+      restrict: <span class="hljs-string">'A'</span>,
+      <span class="hljs-comment">// here we can catch attributes on the elements and</span>
+      <span class="hljs-comment">// use their values to populate internal variables</span>
+      <span class="hljs-comment">// in the directive's scope</span>
+      scope: {
+        <span class="hljs-comment">// we want to turn the contents of the `onEnter`</span>
+        <span class="hljs-comment">// attribute into an internal function (hence &amp;)</span>
+        <span class="hljs-comment">// called `callback`</span>
+        callback: <span class="hljs-string">'&amp;onEnter'</span>, <span class="hljs-comment">// it is onEnter instead of on-enter</span>
+        <span class="hljs-comment">// also evaluate (what &lt; means) the onEnterDisabled</span>
+        <span class="hljs-comment">// attribute into an internal variable "disabled"</span>
+        disabled: <span class="hljs-string">'&lt;onEnterDisabled'</span>
+      },
+      <span class="hljs-comment">// the "link" function will be called with the scope</span>
+      <span class="hljs-comment">// variables in an object and a jQuery-wrapped</span>
+      <span class="hljs-comment">// reference to the element</span>
+      link: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope, elem, attrs</span>)</span>{
+        <span class="hljs-comment">// we now want to add an event listener that catches</span>
+        <span class="hljs-comment">// enter clicks, and when those happen we want to pass</span>
+        <span class="hljs-comment">// the event object along to the `callback` scope function</span>
+        elem.on(<span class="hljs-string">"keyup"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{
+          <span class="hljs-keyword">if</span> (e.key === <span class="hljs-string">'Enter'</span> || e.keyCode === <span class="hljs-number">13</span>){
+            <span class="hljs-keyword">if</span> (!$scope.disabled) {
+              <span class="hljs-comment">// we populate the `$event` variable with the event obj</span>
+              $scope.callback({<span class="hljs-string">"$event"</span>: e});
+              $scope.$apply(); <span class="hljs-comment">// trigger redrawing</span>
+            }
+          }
+        });
+      }
+    };
+  })
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+function select(id){
+  let button = document.querySelector(`[data-file=${id}]`);
+  if (button){
+    document.querySelectorAll('.sources .active').forEach(function(elem){
+      elem.classList.remove('active')
+    });
+    button.classList.add('active');
+    document.getElementById(id + '-source').classList.add('active');
+  } else {
+    console.log("Warning, couldn't find source file", id);
+  }
+}
+
+document.querySelectorAll('.sourcenav > *').forEach(
+  elem => elem.addEventListener('click', function(e){
+    location.hash = '#' + this.getAttribute("data-file");
+    e.preventDefault();
+  })
+);
+
+window.addEventListener("hashchange", function(){
+  select(location.hash.replace('#',''));
+});
+
+select( (location.hash || '').replace('#','') || 'main_ts' );
+
+  </script>
+  <script charset="utf-8" src="../../lib/demos.js"></script>
+</body>
+
+</html>

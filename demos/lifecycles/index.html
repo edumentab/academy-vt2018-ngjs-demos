@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Demo</title>
+  <link rel="stylesheet" href="../../lib/style.css">
+  <link rel="stylesheet" href="../../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="lifecycles">
+  <div class="wrapper">
+    <div>
+      <a href="../../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating the component <strong>lifecycle</strong> methods:</p>
+
+<ul><li><code>$onInit</code> is called upon creation</li><li><code>$onChanges</code> is called when data from parent changes (not including two-way data binding)</li><li><code>$onDestroy</code> is called when component will be removed</li></ul></div>
+      <app><div ng-app="lifecycleDemo" ng-cloak>
+  <div ng-controller="lifecycleController">
+    <input ng-model="valToChild"> <br/>
+    <label>
+      <input type="checkbox" ng-model="showChild">
+      Show child
+    </label>
+    <childcomponent ng-if="showChild" input="valToChild"></childcomponent>
+  </div>
+</div></app>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='index_html'>index.html</div><div data-file='main_ts'>main.ts</div><div data-file='childcomponent_ts'>childcomponent.ts</div></div>
+      <div class="sourcefiles"><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-app</span>=<span class="hljs-string">"lifecycleDemo"</span> <span class="hljs-attr">ng-cloak</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ng-controller</span>=<span class="hljs-string">"lifecycleController"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ng-model</span>=<span class="hljs-string">"valToChild"</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">br</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">ng-model</span>=<span class="hljs-string">"showChild"</span>&gt;</span>
+      Show child
+    <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">childcomponent</span> <span class="hljs-attr">ng-if</span>=<span class="hljs-string">"showChild"</span> <span class="hljs-attr">input</span>=<span class="hljs-string">"valToChild"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">childcomponent</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre><pre id='main_ts-source'><code><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> angular <span class="hljs-keyword">from</span> <span class="hljs-string">'angular'</span>;
+
+<span class="hljs-keyword">let</span> app = angular.module(<span class="hljs-string">'lifecycleDemo'</span>, []);
+
+app.controller(<span class="hljs-string">'lifecycleController'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$scope</span>)</span>{
+  $scope.showChild = <span class="hljs-literal">false</span>; <span class="hljs-comment">// initial value, not really needed</span>
+  $scope.valToChild = <span class="hljs-string">'hello'</span>;
+});
+
+<span class="hljs-keyword">import</span> addChildComponent <span class="hljs-keyword">from</span> <span class="hljs-string">'./childcomponent'</span>;
+addChildComponent(app);
+</code></pre><pre id='childcomponent_ts-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addChildComponent</span>(<span class="hljs-params">app</span>)</span>{
+  app.component(<span class="hljs-string">'childcomponent'</span>, {
+    bindings: {
+      <span class="hljs-comment">// evaluate the contents of the `input` attribute as an</span>
+      <span class="hljs-comment">// expression, and populate a local `input` variable</span>
+      <span class="hljs-comment">// with that value</span>
+      input: <span class="hljs-string">'&lt;'</span>
+    },
+    controller: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-keyword">this</span>.$onInit = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"INIT!"</span>);
+      };
+      <span class="hljs-keyword">this</span>.$onChanges = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">changes</span>)</span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"CHANGES!"</span>, changes);
+      };
+      <span class="hljs-keyword">this</span>.$onDestroy = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"DESTROY!"</span>);
+      }
+    },
+    template: <span class="hljs-string">`
+      &lt;p&gt;Value from parent: {{$ctrl.input}}&lt;/p&gt;
+      &lt;p&gt;Check the console for my spam!&lt;/p&gt;
+    `</span>
+  });
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+function select(id){
+  let button = document.querySelector(`[data-file=${id}]`);
+  if (button){
+    document.querySelectorAll('.sources .active').forEach(function(elem){
+      elem.classList.remove('active')
+    });
+    button.classList.add('active');
+    document.getElementById(id + '-source').classList.add('active');
+  } else {
+    console.log("Warning, couldn't find source file", id);
+  }
+}
+
+document.querySelectorAll('.sourcenav > *').forEach(
+  elem => elem.addEventListener('click', function(e){
+    location.hash = '#' + this.getAttribute("data-file");
+    e.preventDefault();
+  })
+);
+
+window.addEventListener("hashchange", function(){
+  select(location.hash.replace('#',''));
+});
+
+select( (location.hash || '').replace('#','') || 'main_ts' );
+
+  </script>
+  <script charset="utf-8" src="../../lib/demos.js"></script>
+</body>
+
+</html>

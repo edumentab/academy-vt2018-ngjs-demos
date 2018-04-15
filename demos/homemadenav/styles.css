@@ -1,0 +1,30 @@
+ul {
+  list-style-type: none;
+  padding-left: 0;
+  display: flex;
+}
+
+li:not(:last-child) {
+  margin-right: 1em;
+}
+
+li {
+  padding: 3px;
+  border: 1px solid salmon;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+li:hover {
+  background-color: #DCDCDC;
+}
+
+li.active {
+  background-color: #BBB;
+  color: white;
+}
+
+footer {
+  margin-top: 2em;
+  border-top: 1px solid salmon;
+}
